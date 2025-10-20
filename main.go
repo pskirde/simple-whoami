@@ -62,7 +62,7 @@ func main() {
 </html>`, hostname, ip, appVersion, appEnv)
 	})
 
-	addr := ":9999"
+	addr := ":8080"
 	log.Printf("Server listening on %s (hostname=%s, ip=%s, version=%s, env=%s)", addr, hostname, ip, appVersion, appEnv)
 	log.Fatal(http.ListenAndServe(addr, nil))
 }
