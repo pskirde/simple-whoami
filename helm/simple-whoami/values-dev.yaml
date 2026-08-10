@@ -1,3 +1,4 @@
+email: "pascalskirde@web.de"
 PublicDomain: "whoami.kube-lab.steinburg.cloud"
 replicaCount: 3
 env:
