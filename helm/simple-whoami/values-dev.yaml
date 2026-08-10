@@ -1,4 +1,5 @@
-replicaCount: 1
+PublicDomain: "whoami.kube-lab.steinburg.cloud"
+replicaCount: 3
 env:
   APP_ENVIRONMENT: "dev"
   APP_VERSION: "1.0.0-dev"
