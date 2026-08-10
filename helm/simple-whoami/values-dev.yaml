@@ -1,9 +1,23 @@
 email: "pascalskirde@web.de"
-PublicDomain: "whoami.kube-lab.steinburg.cloud"
+
+# Must differ from prod: two Ingresses on the same host fight over the same
+# Traefik router and both Certificates race for the same ACME order.
+# Needs its own DNS A record pointing at the cluster nodes.
+PublicDomain: "whoami-dev.kube-lab.steinburg.cloud"
+
 replicaCount: 3
+
 env:
   APP_ENVIRONMENT: "dev"
   APP_VERSION: "1.0.0-dev"
+
 image:
   tag: latest
 
+clusterIssuer:
+  create: true
+  # Staging, so failed experiments do not burn the production rate limits
+  # (5 failed validations/hour, 5 duplicate certs/week). Browsers will not
+  # trust a staging certificate - that is expected.
+  name: letsencrypt-staging
+  server: https://acme-staging-v02.api.letsencrypt.org/directory

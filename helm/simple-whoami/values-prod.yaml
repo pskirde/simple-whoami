@@ -1,9 +1,17 @@
 email: "pascalskirde@web.de"
+
 PublicDomain: "whoami.kube-lab.steinburg.cloud"
+
 replicaCount: 5
+
 env:
   APP_ENVIRONMENT: "prod"
   APP_VERSION: "1.0.0"
+
 image:
   tag: latest
 
+clusterIssuer:
+  create: true
+  name: letsencrypt-prod
+  server: https://acme-v02.api.letsencrypt.org/directory

@@ -2,14 +2,47 @@ replicaCount: 2
 
 image:
   repository: ghcr.io/pskirde/simple-whoami
+  # Prefer an immutable tag from CI (the workflow publishes sha-<commit>) over
+  # "latest": ArgoCD only rolls out when the rendered manifest changes, so a
+  # moving tag never triggers a deployment.
   tag: latest
-  pullPolicy: IfNotPresent
+  # Alternative to tag, pins the exact build. Wins over tag when set.
+  digest: ""        # z.B. "sha256:abc123..."
+  # Empty: Always for the mutable "latest" tag, IfNotPresent for anything else.
+  pullPolicy: ""
   pullSecrets: []   # z.B. ["ghcr-pull"]
 
 service:
   type: ClusterIP
   port: 80
   targetPort: 8080
+
+# Public hostname for this release. Required on purpose: an empty host renders
+# an Ingress rule without a host, which Traefik turns into a catch-all router
+# that answers for every hostname in the cluster. Each environment needs its
+# own hostname.
+PublicDomain: ""
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations: {}
+  tls:
+    enabled: true
+    # Defaults to "<release-name>-tls" so two environments never share a secret.
+    secretName: ""
+
+# ACME account address, required when clusterIssuer.create is true.
+email: ""
+
+clusterIssuer:
+  # A ClusterIssuer is cluster-scoped. Create each issuer name from exactly one
+  # Application, and make sure the ArgoCD AppProject whitelists cluster-scoped
+  # resources (clusterResourceWhitelist) - otherwise the sync is rejected and no
+  # certificate is ever issued.
+  create: false
+  name: letsencrypt-prod
+  server: https://acme-v02.api.letsencrypt.org/directory
 
 env:
   APP_VERSION: "0.0.0"
@@ -25,4 +58,3 @@ resources:
 
 podAnnotations: {}
 extraLabels: {}
-
